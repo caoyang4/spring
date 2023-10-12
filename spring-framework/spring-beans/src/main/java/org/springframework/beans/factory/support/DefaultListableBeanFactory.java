@@ -866,12 +866,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			logger.trace("Pre-instantiating singletons in " + this);
 		}
 
-		// Iterate over a copy to allow for init methods which in turn register new bean definitions.
-		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
+		// 拷贝一个副本以允许 init 方法依次注册新的 bean 定义
 		// 获取容器中的所有Bean，依次进行初始化和创建对象
 		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
 
-		// Trigger initialization of all non-lazy singleton beans...
+		// 触发所有非惰性单例 bean 的初始化
 		for (String beanName : beanNames) {
 			// 获取Bean的定义信息；RootBeanDefinition
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
@@ -879,6 +878,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
 				// 判断是否是FactoryBean；是否是实现FactoryBean接口的Bean；
 				if (isFactoryBean(beanName)) {
+					// 前缀增加&来获取bean
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
 					if (bean instanceof FactoryBean) {
 						FactoryBean<?> factory = (FactoryBean<?>) bean;
@@ -899,14 +899,16 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				}
 				// 不是工厂Bean，利用getBean(beanName);创建对象
 				else {
+					// 实际调用的是AbstractBeanFactory接口的getBean方法
 					getBean(beanName);
 				}
 			}
 		}
 
-		// Trigger post-initialization callback for all applicable beans...
+		// 为所有适用的 bean 触发初始化后回调.
 		for (String beanName : beanNames) {
 			Object singletonInstance = getSingleton(beanName);
+			// 在单例初始化后试过实现了SmartInitializingSingleton接口调用SmartInitializingSingleton的afterSingletonsInstantiated方法
 			if (singletonInstance instanceof SmartInitializingSingleton) {
 				SmartInitializingSingleton smartSingleton = (SmartInitializingSingleton) singletonInstance;
 				if (System.getSecurityManager() != null) {
@@ -916,6 +918,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 					}, getAccessControlContext());
 				}
 				else {
+					// 在Spring容器启动完成时进行扩展操作
 					smartSingleton.afterSingletonsInstantiated();
 				}
 			}

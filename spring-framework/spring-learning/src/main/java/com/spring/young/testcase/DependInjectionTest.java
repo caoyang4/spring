@@ -1,7 +1,7 @@
-package com.spirng.young.testcase;
+package com.spring.young.testcase;
 
-import com.spirng.young.config.Config;
-import com.spirng.young.dao.Student;
+import com.spring.young.config.Config;
+import com.spring.young.dao.Student;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**

@@ -1,4 +1,4 @@
-package com.spirng.young.dao;
+package com.spring.young.dao;
 
 /**
  * @author caoyang

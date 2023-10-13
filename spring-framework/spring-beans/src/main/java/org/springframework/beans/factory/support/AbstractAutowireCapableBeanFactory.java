@@ -1821,15 +1821,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}, getAccessControlContext());
 		}
 		else {
+			// 执行Aware接口方法
+			// 只有 BeanNameAware,BeanClassLoaderAware,BeanFactoryAware 这三个接口会被执行
 			invokeAwareMethods(beanName, bean);
 		}
 
 		Object wrappedBean = bean;
 		if (mbd == null || !mbd.isSynthetic()) {
+			// 【扩展点】 BeanPostProcessors 初始化前的处理
 			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
 		}
 
 		try {
+			// 执行初始化方法
 			invokeInitMethods(beanName, wrappedBean, mbd);
 		}
 		catch (Throwable ex) {
@@ -1894,6 +1898,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				}
 			}
 			else {
+				// 【扩展点】执行 InitializingBean 接口afterPropertiesSet方法
 				((InitializingBean) bean).afterPropertiesSet();
 			}
 		}
